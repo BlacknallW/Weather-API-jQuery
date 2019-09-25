@@ -1,9 +1,20 @@
 $(document).ready(function() {
+    const myForm = document.querySelector("#myForm")
     
+    myForm.addEventListener('submit', onSubmit);
 
-    $.getJSON("https://api.openweathermap.org/data/2.5/weather?q=Atlanta,US&units=imperial&appid=2f4580c1da2a1471787ee4c356181fd1", function(data){
-    console.log(data);
+    function onSubmit(e) {
+        e.preventDefault();
+        let cityName = $("#getLocation").val()
+        console.log(cityName)
+        apiWeather(cityName)
+    }
+    
+    const apiWeather = (cityName) => {$.getJSON(`https://api.openweathermap.org/data/2.5/weather?q=${cityName},US&units=imperial&appid=2f4580c1da2a1471787ee4c356181fd1`, function(data){
+    console.log(data,);
 
+    
+    
     let mapCoords = `http://maps.google.com/maps?q=${data.coord.lat},${data.coord.lon}&output=embed`;
     let icon = "https://openweathermap.org/img/w/" + data.weather[0].icon + ".png";
     let temp =  Math.round(data.main.temp);
@@ -19,20 +30,15 @@ $(document).ready(function() {
         let normalTime = `${date}`;
         return normalTime
     }
-
-    $(".city").append(city)
-    $('.icon').attr("src", icon);
-    $('.weather').append(weather);
-    $(".temp").append(temp);
-    $(".wind_Speed").append(windSpeed);
     
-    $(".sunrise").append(dateConverter(sunrise))
-    $(".sunset").append(dateConverter(sunset))
-
+    $(".weather-container").append(`<p>City: ${city}</p>`)
+    $('.weather-container').append(`<img src="${icon}">`);
+    $('.weather-container').append(`<p>Sky Conditions: ${weather}</p>`);
+    $(".weather-container").append(`<p>Current Temperature: ${temp}</p>`);
+    $(".weather-container").append(`<p>Wind Speed(mph): ${windSpeed}</p>`);
+    $(".weather-container").append(`<p>Sunrise Time: ${dateConverter(sunrise)}</p>`)
+    $(".weather-container").append(`<p>Sunset Time: ${dateConverter(sunset)}</p>`)
     $('.weather-container').append(`<iframe src=${mapCoords}/>`);
-
-    console.log(icon)
-    console.log(mapCoords)
     });
-
+}
 });
